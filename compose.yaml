@@ -1,0 +1,26 @@
+services:
+  app:
+    image: tarefas
+    environment:
+      - SQLALCHEMY_DATABASE_URI=mariadb+mariadbconnector://root:123@db:3306/tarefas
+    ports: ["5000:5000"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:lts
+    environment:
+      - MARIADB_ROOT_PASSWORD=123
+    volumes:
+      - db-data:/var/lib/mysql:Z
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  db-data:

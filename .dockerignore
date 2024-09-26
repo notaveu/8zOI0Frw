@@ -1,6 +1,8 @@
 __pycache__/
 .dockerignore
+.env
 .git/
 .gitignore
 .python-version
+compose.yaml
 Dockerfile

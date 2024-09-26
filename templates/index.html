@@ -2,13 +2,16 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tarefas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarefas</title>
 </head>
 
 <body>
-  {{ message }}
+    <div>There are {{ tasks|length }} tasks</div>
+    {% for task in tasks %}
+        <div>{{ task.title }}</div>
+    {% endfor %}
 </body>
 
 </html>
