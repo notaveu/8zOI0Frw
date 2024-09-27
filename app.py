@@ -12,4 +12,9 @@ dao = create_db(app)
 @app.route('/')
 def index():
     tasks = list(dao.get_all())
-    return render_template('index.html', tasks=tasks)
+    return render_template(
+        'index.html',
+        fab_href='/new',
+        fab_label='Nova',
+        tasks=tasks,
+    )

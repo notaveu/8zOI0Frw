@@ -1,17 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}Lista de tarefas{% endblock %}
+{% block body %}
+    <style>
+        .actions {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+        }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarefas</title>
-</head>
+        .action {
+            font-size: .625rem;
+        }
+    </style>
 
-<body>
-    <div>There are {{ tasks|length }} tasks</div>
-    {% for task in tasks %}
-        <div>{{ task.title }}</div>
-    {% endfor %}
-</body>
+    {% if tasks|length %}
+        <div class="d-flex flex-column gap-3">
+            {% for task in tasks %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ task.title }}</h5>
+                        <p class="card-text">{{ task.body if task.body is not none }}</p>
+                    </div>
+                    <div class="actions">
+                        <a
+                            class="btn btn-sm btn-secondary action"
+                            href="/edit/{{ task.id }}"
+                        >
+                            Editar
+                        </a>
+                        <a
+                            class="btn btn-sm btn-secondary action"
+                            href="/delete/{{ task.id }}"
+                        >
+                            Deletar
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        Sem tarefas.
+    {% endif %}
 
-</html>
+    {% include "fab.html" %}
+{% endblock %}
