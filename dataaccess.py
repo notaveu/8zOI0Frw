@@ -36,6 +36,10 @@ class DbAccess:
         db.session.delete(task)
         db.session.commit()
 
+    def delete_by_id(self, id):
+        Task.query.filter_by(id=id).delete()
+        db.session.commit()
+
 def create_db(app):
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
     db.init_app(app)
