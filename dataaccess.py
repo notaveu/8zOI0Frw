@@ -24,12 +24,16 @@ class Task(db.Model):
 class DbAccess:
     def get_all(self):
         return db.session.scalars(db.select(Task)).all()
+    
+    def find_by_id(self, id):
+        return Task.query.filter_by(id=id).one()
 
     def create(self, task):
         db.session.add(task)
         db.session.commit()
 
     def update(self, task):
+        Task.query.filter_by(id=task.id).update({'title': task.title, 'body': task.body})
         db.session.commit()
 
     def delete(self, task):

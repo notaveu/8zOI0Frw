@@ -31,6 +31,19 @@ def new():
         title='Nova tarefa'
     )
 
+@app.route('/edit/<task_id>')
+def edit(task_id):
+    task = dao.find_by_id(task_id)
+    return render_template(
+        'form.html',
+        fab_label='Salvar',
+        form_action='/update/' + task_id,
+        task_body=task.body,
+        task_id=task.id,
+        task_title=task.title,
+        title='Editar tarefa'
+    )
+
 @app.route('/create', methods=['POST'])
 def create():
     if valid_task(request.form['title']):
@@ -47,6 +60,24 @@ def create():
             task_body=request.form['body'] if len(request.form['body']) else '',
             task_title=request.form['title'] if len(request.form['title']) else '',
             title='Nova tarefa'
+        )
+
+@app.route('/update/<task_id>', methods=['POST'])
+def update(task_id):
+    if valid_task(request.form['title']):
+        title = request.form['title']
+        body = request.form['body'].strip() if request.form['body'].strip() else None
+        dao.update(Task(id=task_id, title=title, body=body))
+        return redirect(url_for('index'))
+    else:
+        return render_template(
+            'form.html',
+            fab_label='Salvar',
+            form_action='/update/' + task_id,
+            task_body=request.form['body'] if len(request.form['body']) else '',
+            task_id=task_id,
+            task_title=request.form['title'] if len(request.form['title']) else '',
+            title='Editar tarefa'
         )
 
 @app.route('/delete/<task_id>')
