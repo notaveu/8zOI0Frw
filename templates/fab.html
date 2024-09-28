@@ -4,5 +4,26 @@
         bottom: 16px;
         right: 16px;
     }
+
+    @media (min-width: 576px) {
+        .fab {
+            position: static;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+    }
 </style>
-<a class="btn btn-lg btn-primary fab" href="{{ fab_href }}">{{ fab_label }}</a>
+
+{% if form_action %}
+    <div class="d-flex align-items-center gap-3 fab">
+        <a class="btn btn-secondary" href="/">Cancelar</a>
+
+        <button class="btn btn-lg btn-primary" type="submit">
+            {{ fab_label }}
+        </buttton>
+    </div>
+{% else %}
+    <a class="btn btn-lg btn-primary fab" href="{{ fab_href }}">
+        {{ fab_label }}
+    </a>
+{% endif %}

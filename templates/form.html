@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+    <style>
+        input:invalid {
+            border-color: red;
+        }
+    </style>
+
+    <form action="{{ form_action }}" method="post">
+        <div class="mb-3">
+            <label class="form-label" for="title">Título</label>
+            <input
+                class="form-control"
+                autofocus
+                autocomplete="off"
+                name="title"
+                id="title"
+                value="{{ task_title }}"
+                required
+            >
+        </div>
+
+        <div>
+            <label class="form-label" for="body">Detalhes</label>
+            <textarea
+                class="form-control"
+                rows="10"
+                autocomplete="off"
+                name="body"
+                id="body"
+            >{{ task_body if task_body is not none }}</textarea>
+        </div>
+
+        {% include "fab.html" %}
+    </form>
+{% endblock %}
