@@ -1,24 +1,30 @@
 import pytest
+from unittest.mock import Mock, patch
 
 import sys
 sys.path.insert(0, '.')
 
-from app import app, dao, Task
+daoMock = Mock()
+createdbMock = Mock(return_value=daoMock)
+TaskMock = Mock()
+dataaccessMock = Mock(create_db=createdbMock, Task=TaskMock)
+
+with patch('dataaccess.create_db', createdbMock):
+    with patch('dataaccess.Task', TaskMock):
+        from app import app, dao
 
 @pytest.fixture()
 def client():
-    with app.app_context():
-        dao.delete_all()
-    yield app.test_client()
-    with app.app_context():
-        dao.delete_all()
+    daoMock.get_all.return_value = []
+    TaskMock.reset_mock()
+    return app.test_client()
 
 @pytest.fixture()
 def some_tasks(client):
-    print('some_tasks')
-    with app.app_context():
-        dao.create(Task(title='Task 1'))
-        dao.create(Task(title='Task 2'))
+    daoMock.get_all.return_value = [
+        Mock(id=1, title='Task 1'),
+        Mock(id=2, title='Task 2')
+    ]
     return client
 
 def test_retrieve_none(client):
@@ -31,38 +37,41 @@ def test_retrieve_some(some_tasks):
     assert b'Task 2' in response.data
 
 def test_create(client):
+    # given
+    TaskMock.return_value = Mock()
+    daoMock.create = Mock()
     title = 'Fugiat deserunt irure amet veniam'
     body = 'Duis eu nisi do excepteur eu'
+    # when
     client.post('/create', data={
         'title': title,
         'body': body
     })
-    with app.app_context():
-        task = dao.get_all()[0]
-    assert task.title == title
-    assert task.body == body
+    # then
+    TaskMock.assert_called_once_with(title=title, body=body)
+    daoMock.create.assert_called_once_with(TaskMock.return_value)
 
 def test_update(some_tasks):
-    with app.app_context():
-        tasks = dao.get_all()
-    task0 = tasks[0]
+    # given
+    TaskMock.return_value = Mock()
+    daoMock.update = Mock()
+    tasks = dao.get_all()
     title = 'Aute Lorem magna'
     body = 'Duis velit'
+    # when
     some_tasks.post('/update/' + str(tasks[1].id), data={
         'title': title,
         'body': body
     })
-    with app.app_context():
-        tasks = dao.get_all()
-    assert tasks[0].title == task0.title
-    assert tasks[0].body == task0.body
-    assert tasks[1].title == title
-    assert tasks[1].body == body
+    # then
+    TaskMock.assert_called_once_with(id=str(tasks[1].id), title=title, body=body)
+    daoMock.update.assert_called_once_with(TaskMock.return_value)
 
 def test_delete(some_tasks):
-    with app.app_context():
-        tasks = dao.get_all()
+    # given
+    daoMock.delete_by_id = Mock()
+    tasks = dao.get_all()
+    # when
     some_tasks.get('/delete/' + str(tasks[0].id))
-    with app.app_context():
-        tasks = dao.get_all()
-    assert len(tasks) == 1
+    # then
+    daoMock.delete_by_id.assert_called_once_with(id=str(tasks[0].id))
