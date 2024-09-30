@@ -27,6 +27,10 @@ class DbAccess:
     
     def find_by_id(self, id):
         return Task.query.filter_by(id=id).one()
+    
+    def delete_all(self):
+        Task.query.delete()
+        db.session.commit()
 
     def create(self, task):
         db.session.add(task)
