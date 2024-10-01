@@ -2,6 +2,7 @@ services:
   app:
     image: tarefas
     environment:
+      - SECRET_KEY=c89d4aca478192eb62ca5d4417b530b7dda798625cc468f8e28854199c7b28de
       - SQLALCHEMY_DATABASE_URI=mariadb+mariadbconnector://root:123@db:3306/tarefas
     ports: ["5000:5000"]
     depends_on:

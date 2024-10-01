@@ -23,8 +23,11 @@ class Task(db.Model):
     completed: Mapped[bool] = mapped_column(default=False, index=True)
 
 class DbAccess:
-    def get_all(self):
-        return db.session.scalars(db.select(Task)).all()
+    def get_all(self, hide_completed=False):
+        query = Task.query
+        if hide_completed:
+            query = query.filter_by(completed=False)
+        return query.all()
     
     def find_by_id(self, id):
         return Task.query.filter_by(id=id).one()

@@ -15,6 +15,22 @@
         }
     </style>
 
+    <form class="mb-3" action="/toggle_completed" method="post">
+        <div class="form-check">
+            <input
+                class="form-check-input"
+                type="checkbox"
+                name="hide_completed"
+                id="hide_completed"
+                {{ 'checked' if session.get('hide_completed') }}
+                onchange="event.target.parentNode.parentNode.submit()"
+            >
+            <label class="form-check-label" for="hide_completed">
+                Esconder concluídas
+            </label>
+        </div>
+    </form>
+
     {% if tasks|length %}
         <div class="d-flex flex-column gap-3">
             {% for task in tasks %}

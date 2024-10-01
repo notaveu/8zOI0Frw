@@ -1,5 +1,5 @@
 import os
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, session, url_for
 from dataaccess import create_db, Task
 
 if not os.getenv('SQLALCHEMY_DATABASE_URI'):
@@ -7,11 +7,13 @@ if not os.getenv('SQLALCHEMY_DATABASE_URI'):
     load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv('SECRET_KEY')
 dao = create_db(app)
 
 @app.route('/')
 def index():
-    tasks = list(dao.get_all())
+    hide_completed = session.get('hide_completed')
+    tasks = list(dao.get_all(hide_completed=hide_completed))
     return render_template(
         'index.html',
         fab_href='/new',
@@ -95,6 +97,11 @@ def complete(task_id):
 @app.route('/delete/<task_id>')
 def delete(task_id):
     dao.delete_by_id(id=task_id)
+    return redirect(url_for('index'))
+
+@app.route('/toggle_completed', methods=['POST'])
+def toggle_completed():
+    session['hide_completed'] = not session.get('hide_completed')
     return redirect(url_for('index'))
 
 def valid_task(title):
