@@ -1,8 +1,9 @@
+import datetime
 import os
-import sqlalchemy
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry
+from sqlalchemy.sql import func
 from typing_extensions import Annotated
 
 str_100 = Annotated[str, 100]
@@ -21,6 +22,11 @@ class Task(db.Model):
     title: Mapped[str_100] = mapped_column()
     body: Mapped[str_100] = mapped_column(nullable=True)
     completed: Mapped[bool] = mapped_column(default=False, index=True)
+    created_at: Mapped[datetime.datetime] = mapped_column(default=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        default=func.now(),
+        onupdate=func.now()
+    )
 
 class DbAccess:
     def get_all(self, hide_completed=False):

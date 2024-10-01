@@ -2,6 +2,11 @@
 {% block title %}Lista de tarefas{% endblock %}
 {% block body %}
     <style>
+        .card__footer {
+            margin-top: 32px;
+            font-size: 11px;
+        }
+
         .actions {
             position: absolute;
             top: 16px;
@@ -37,9 +42,15 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">{{ task.title }}</h5>
+
                         <p class="card-text">
                             {{ task.body if task.body is not none }}
                         </p>
+
+                        <div class="card__footer">
+                            <div>Criada: {{ task.created_at.isoformat() }}Z</div>
+                            <div>Modificada: {{ task.updated_at.isoformat() }}Z</div>
+                        </div>
                     </div>
 
                     <div class="actions">
