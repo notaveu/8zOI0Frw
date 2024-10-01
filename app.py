@@ -39,6 +39,7 @@ def edit(task_id):
         fab_label='Salvar',
         form_action='/update/' + task_id,
         task_body=task.body,
+        task_completed=task.completed,
         task_id=task.id,
         task_title=task.title,
         title='Editar tarefa'
@@ -49,7 +50,8 @@ def create():
     if valid_task(request.form['title']):
         title = request.form['title']
         body = request.form['body'].strip() if request.form['body'].strip() else None
-        dao.create(Task(title=title, body=body))
+        completed = request.form.get('completed') == 'on'
+        dao.create(Task(title=title, body=body, completed=completed))
         return redirect(url_for('index'))
     else:
         return render_template(
@@ -58,6 +60,7 @@ def create():
             form_action='/create',
             form_method='POST',
             task_body=request.form['body'] if len(request.form['body']) else '',
+            task_completed=request.form.get('completed'),
             task_title=request.form['title'] if len(request.form['title']) else '',
             title='Nova tarefa'
         )
@@ -67,7 +70,8 @@ def update(task_id):
     if valid_task(request.form['title']):
         title = request.form['title']
         body = request.form['body'].strip() if request.form['body'].strip() else None
-        dao.update(Task(id=task_id, title=title, body=body))
+        completed = request.form.get('completed') == 'on'
+        dao.update(Task(id=task_id, title=title, body=body, completed=completed))
         return redirect(url_for('index'))
     else:
         return render_template(
@@ -75,10 +79,18 @@ def update(task_id):
             fab_label='Salvar',
             form_action='/update/' + task_id,
             task_body=request.form['body'] if len(request.form['body']) else '',
+            task_completed=request.form.get('completed'),
             task_id=task_id,
             task_title=request.form['title'] if len(request.form['title']) else '',
             title='Editar tarefa'
         )
+
+@app.route('/complete/<task_id>')
+def complete(task_id):
+    task = dao.find_by_id(task_id)
+    task.completed = True
+    dao.update(task)
+    return redirect(url_for('index'))
 
 @app.route('/delete/<task_id>')
 def delete(task_id):

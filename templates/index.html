@@ -21,15 +21,29 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">{{ task.title }}</h5>
-                        <p class="card-text">{{ task.body if task.body is not none }}</p>
+                        <p class="card-text">
+                            {{ task.body if task.body is not none }}
+                        </p>
                     </div>
+
                     <div class="actions">
+                        <a
+                            class="
+                                btn btn-sm btn-secondary action
+                                {{ 'd-none' if task.completed }}
+                            "
+                            href="/complete/{{ task.id }}"
+                        >
+                            Completar
+                        </a>
+
                         <a
                             class="btn btn-sm btn-secondary action"
                             href="/edit/{{ task.id }}"
                         >
                             Editar
                         </a>
+
                         <a
                             class="btn btn-sm btn-secondary action"
                             href="/delete/{{ task.id }}"

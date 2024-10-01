@@ -48,7 +48,7 @@ def test_create(client):
         'body': body
     })
     # then
-    TaskMock.assert_called_once_with(title=title, body=body)
+    TaskMock.assert_called_once_with(title=title, body=body, completed=False)
     daoMock.create.assert_called_once_with(TaskMock.return_value)
 
 def test_update(some_tasks):
@@ -61,10 +61,16 @@ def test_update(some_tasks):
     # when
     some_tasks.post('/update/' + str(tasks[1].id), data={
         'title': title,
-        'body': body
+        'body': body,
+        'completed': 'on'
     })
     # then
-    TaskMock.assert_called_once_with(id=str(tasks[1].id), title=title, body=body)
+    TaskMock.assert_called_once_with(
+        id=str(tasks[1].id),
+        title=title,
+        body=body,
+        completed=True
+    )
     daoMock.update.assert_called_once_with(TaskMock.return_value)
 
 def test_delete(some_tasks):

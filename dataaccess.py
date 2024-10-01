@@ -20,6 +20,7 @@ class Task(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str_100] = mapped_column()
     body: Mapped[str_100] = mapped_column(nullable=True)
+    completed: Mapped[bool] = mapped_column(default=False, index=True)
 
 class DbAccess:
     def get_all(self):
@@ -37,7 +38,13 @@ class DbAccess:
         db.session.commit()
 
     def update(self, task):
-        Task.query.filter_by(id=task.id).update({'title': task.title, 'body': task.body})
+        Task.query \
+            .filter_by(id=task.id) \
+            .update({
+                'title': task.title,
+                'body': task.body,
+                'completed': task.completed
+            })
         db.session.commit()
 
     def delete(self, task):
